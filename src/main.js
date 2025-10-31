@@ -4,16 +4,16 @@ import * as THREE from "three";
 class Site {
   constructor({ dom }) {
     this.time = 0;
-    this.render();
     this.container = dom;
     this.width = window.innerWidth;
     this.height = window.innerHeight;
     this.images = [...document.querySelectorAll(".images img")];
-    this.material;
+    this.material = null;
     this.imagesStore = [];
     this.uStartIndex = 0;
     this.uEndIndex = 1;
 
+    // Create scene, camera, and renderer
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(
       75,
@@ -23,22 +23,42 @@ class Site {
     );
 
     this.renderer = new THREE.WebGLRenderer({
-      antialias:true, //smooth edgs
-      alpha:true,  //transparaon
+      antialias: true, // smooth edges
+      alpha: true, // transparency
     });
-    renderer.setSize(this.width, this.height);
-    this.container.appendChild(renderer.domElement);
+
+    // ✅ FIX: use "this.renderer", not "renderer"
+    this.renderer.setSize(this.width, this.height);
+    this.container.appendChild(this.renderer.domElement);
+
+    // Add objects and start render loop
+    this.addObjects();
+    this.render();
   }
+
+  addObjects() {
+    // ✅ FIX: use correct variable names
+    this.geometry = new THREE.BoxGeometry(1, 1, 1);
+    this.material = new THREE.MeshBasicMaterial({ color: 0xffffff }); // ✅ FIX: correct material syntax
+    this.cube = new THREE.Mesh(this.geometry, this.material);
+    this.scene.add(this.cube);
+
+    this.camera.position.z = 5;
+  }
+
   render() {
-    // this.time += 0.05;
-    // Uncomment the line below to enable continuous rendering updates times
+    // Animation loop
+    this.time += 0.05;
+    this.cube.rotation.x += 0.01;
+    this.cube.rotation.y += 0.01;
 
-    this.time++;
-    console.log(this.time, this.container, this.images);
+    this.renderer.render(this.scene, this.camera);
 
-    // window.requestAnimationFrame(this.render.bind(this));
+    // ✅ Enable continuous animation
+    requestAnimationFrame(this.render.bind(this));
   }
 }
+
 new Site({
   dom: document.querySelector(".canvas"),
 });

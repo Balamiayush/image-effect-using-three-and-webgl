@@ -2,3 +2,6 @@
   font-family: Helvetica;
   color: white;
 }
+body{
+  overflow-x: hidden;
+}
