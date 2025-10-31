@@ -18,9 +18,11 @@ class Site {
     this.camera = new THREE.PerspectiveCamera(
       75,
       this.width / this.height,
-      0.1,
-      1000
+      100,
+      2000
     );
+    this.camera.position.z = 200;
+    this.camera.fov = 2 * Math.atan(this.height / 2 / 200) * (180 / Math.PI);
 
     this.renderer = new THREE.WebGLRenderer({
       antialias: true, // smooth edges
@@ -32,25 +34,35 @@ class Site {
     this.container.appendChild(this.renderer.domElement);
 
     // Add objects and start render loop
-    this.addObjects();
+    // this.addObjects();
+    this.addImages();
     this.render();
   }
+  //Adding objects
+  // addObjects() {
+  //   // ✅ FIX: use correct variable names
+  //   this.geometry = new THREE.BoxGeometry(1, 1, 1);
+  //   this.material = new THREE.MeshBasicMaterial({ color: 0xffffff }); // ✅ FIX: correct material syntax
+  //   this.cube = new THREE.Mesh(this.geometry, this.material);
+  //   this.scene.add(this.cube);
 
-  addObjects() {
-    // ✅ FIX: use correct variable names
-    this.geometry = new THREE.BoxGeometry(1, 1, 1);
-    this.material = new THREE.MeshBasicMaterial({ color: 0xffffff }); // ✅ FIX: correct material syntax
-    this.cube = new THREE.Mesh(this.geometry, this.material);
-    this.scene.add(this.cube);
+  //   this.camera.position.z = 5;
+  // }
 
-    this.camera.position.z = 5;
+  //Adding Images
+  addImages() {
+    const textureLoader = new THREE.TextureLoader();
+    const textures = this.images.map((img) => textureLoader.load(img));
+
+    this.material = new THREE.ShaderMaterial({
+      vertexShader: vertex,
+      fragmentShader: fragment,
+    });
   }
 
   render() {
     // Animation loop
     this.time += 0.05;
-    this.cube.rotation.x += 0.01;
-    this.cube.rotation.y += 0.01;
 
     this.renderer.render(this.scene, this.camera);
 
