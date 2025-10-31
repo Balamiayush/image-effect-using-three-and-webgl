@@ -1,6 +1,7 @@
 import "./style.css";
 import * as THREE from "three";
-
+import vertex from "../shaders/vertex.glsl"
+import fragment from "../shaders/fragment.glsl"
 class Site {
   constructor({ dom }) {
     this.time = 0;
