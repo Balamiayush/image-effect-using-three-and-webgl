@@ -38,25 +38,34 @@ class Site {
     this.addImages();
     this.render();
   }
-  //Adding objects
-  // addObjects() {
-  //   // ✅ FIX: use correct variable names
-  //   this.geometry = new THREE.BoxGeometry(1, 1, 1);
-  //   this.material = new THREE.MeshBasicMaterial({ color: 0xffffff }); // ✅ FIX: correct material syntax
-  //   this.cube = new THREE.Mesh(this.geometry, this.material);
-  //   this.scene.add(this.cube);
-
-  //   this.camera.position.z = 5;
-  // }
-
   //Adding Images
   addImages() {
     const textureLoader = new THREE.TextureLoader();
     const textures = this.images.map((img) => textureLoader.load(img));
+    const uniforms = {
+      uTime: { value: 0 },
+      uImage: { value: textures[0] },
+    };
 
     this.material = new THREE.ShaderMaterial({
+      uniforms: uniforms,
       vertexShader: vertex,
       fragmentShader: fragment,
+      transparent: true,
+    });
+    this.images.forEach((img) => {
+      const bounds = img.getBoundingClientRect();
+      const geometry = new THREE.PlaneGeometry(bounds.width, bounds.height);
+      const mesh = new THREE.Mesh(geometry, this.material);
+      this.scene.add(mesh);
+      this.imagesStore.push({
+        img: img,
+        mesh: mesh,
+        top: bounds.top,
+        width: bounds.width,
+        height: bounds.height,
+        left: bounds.left,
+      });
     });
   }
 
