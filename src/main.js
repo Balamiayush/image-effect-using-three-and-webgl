@@ -1,7 +1,8 @@
 import "./style.css";
 import * as THREE from "three";
-import vertex from "../shaders/vertex.glsl"
-import fragment from "../shaders/fragment.glsl"
+import vertex from "../shaders/vertex.glsl";
+import fragment from "../shaders/fragment.glsl";
+
 class Site {
   constructor({ dom }) {
     this.time = 0;
@@ -28,6 +29,7 @@ class Site {
     this.renderer = new THREE.WebGLRenderer({
       antialias: true, // smooth edges
       alpha: true, // transparency
+
     });
 
     // ✅ FIX: use "this.renderer", not "renderer"
@@ -41,19 +43,32 @@ class Site {
   }
   //Adding Images
   addImages() {
+    // load textures
     const textureLoader = new THREE.TextureLoader();
-    const textures = this.images.map((img) => textureLoader.load(img));
+    const textures = this.images.map((img) =>
+      textureLoader.load(img.src || img)
+    );
+
+    // set uniforms with actual textures
     const uniforms = {
       uTime: { value: 0 },
-      uImage: { value: textures[0] },
+      uTimelin: { value: 0.2 },
+      uImage1: { value: textures[0] || null },
+      uImage2: { value: textures[1] || null },
+      uImage3: { value: textures[2] || null },
+      uImage4: { value: textures[3] || null },
+      uStartIndex: { value: 0 },
+      uEndIndex: { value: 1 },
     };
 
     this.material = new THREE.ShaderMaterial({
-      uniforms: uniforms,
-      vertexShader: vertex,
-      fragmentShader: fragment,
-      transparent: true,
-    });
+    uniforms,
+  vertexShader: vertex,
+  fragmentShader: fragment,
+  transparent: true,
+    glslVersion: THREE.GLSL3, // ✅ REQUIRED for WebGL2 shaders
+
+});
     this.images.forEach((img) => {
       const bounds = img.getBoundingClientRect();
       const geometry = new THREE.PlaneGeometry(bounds.width, bounds.height);

@@ -1,12 +1,12 @@
-#version 300 es
-in vec3 a_position;
-in vec2 a_uv;
+in vec3 position;
+in vec2 uv;
 
-uniform mat4 u_modelViewProjection;
+out vec2 vUv;
 
-out vec2 v_uv;
+uniform mat4 modelViewMatrix;
+uniform mat4 projectionMatrix;
 
 void main() {
-    v_uv = a_uv;
-    gl_Position = u_modelViewProjection * vec4(a_position, 1.0);
+  vUv = uv;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 }
